@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 import "primeflex/primeflex.css";
-import 'primevue/resources/themes/lara-light-amber/theme.css'
+import 'primevue/resources/themes/lara-light-purple/theme.css'
 import "primevue/resources/primevue.min.css"; /* Deprecated */
 
 import store from './store'
@@ -26,6 +26,15 @@ import AnimateOnScroll from 'primevue/animateonscroll';
 import Avatar from 'primevue/avatar';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
+import InlineMessage from 'primevue/inlinemessage';
+import Menubar from 'primevue/menubar';
+import Badge from 'primevue/badge';
+import Sidebar from 'primevue/sidebar';
+import Menu from 'primevue/menu';
+import DataView from 'primevue/dataview';
+import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions'
+import Skeleton from 'primevue/skeleton';
+import Tag from 'primevue/tag';
 
 const app = createApp(App);
 
@@ -38,6 +47,13 @@ app.directive('styleclass', StyleClass);
 app.directive('focustrap', FocusTrap);
 app.directive('animateonscroll', AnimateOnScroll);
 
+app.component('Tag', Tag);
+app.component('Skeleton', Skeleton);
+app.component('DataViewLayoutOptions', DataViewLayoutOptions);
+app.component('Menu', Menu);
+app.component('Sidebar', Sidebar);
+app.component('Badge', Badge);
+app.component('InlineMessage', InlineMessage);
 app.component('Toast', Toast);
 app.component('Avatar', Avatar);
 app.component('Button', Button);
@@ -48,6 +64,8 @@ app.component('Card', Card);
 app.component('InputGroup', InputGroup);
 app.component('InputGroupAddon', InputGroupAddon);
 app.component('Image', Image);
+app.component('Menubar', Menubar);
+app.component('DataView', DataView);
 
 app.use(store)
 app.use(router)

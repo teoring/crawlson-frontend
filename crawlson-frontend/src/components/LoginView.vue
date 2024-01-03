@@ -31,6 +31,8 @@
                 <small v-if="passwordError" id="password-text-error"  class="p-error">{{passwordErrorMsg}}</small>
             </div>
 
+            <InlineMessage v-show="isLoginError" severity="error">{{LoginError}}</InlineMessage>
+
             <div class="form-group in3">
                 <Button label="Login" type="submit" class="login-button"/>
             </div>
@@ -41,7 +43,7 @@
 
 
             </Form>
-            <Toast group="br" />
+            <Toast position="bottom-right" group="br" />
         </div>
     </div>
 </div>
@@ -49,8 +51,9 @@
 
 <script>
 import { SET_AUTHENTICATION, SET_JWT_TOKEN, SET_USER_INFO } from "../store/storeconstants";
-import axios from "axios";
 import { Form, Field, ErrorMessage } from 'vee-validate';
+
+import axios from "axios";
 
 import { useToast } from 'primevue/usetoast';
 import { watch } from "vue";
@@ -64,7 +67,6 @@ export default {
         watch(
             () => store.getters.getErrorMessage,
              (message, prevMessage) => {
-              console.log("error message", message);
               if (message) {
                 toast.add({
                   severity: "error",
@@ -108,15 +110,23 @@ export default {
         emailError: "",
         emailErrorMsg: "",
         passwordErrorMsg: "",
-        passwordError: ""
+        passwordError: "",
+        isLoginError: false,
+        LoginError:""
       }
     },
     methods: {
       checkEmailField() {
         if (this.email != "")
         {
-            this.emailError = false;
-            this.emailErrorMsg = "";
+            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+                this.emailError = false;
+                this.emailErrorMsg = "";
+            } else {
+                this.emailError = true;
+                this.emailErrorMsg = "Please enter a valid email address.";
+            }
+
         } else {
             this.emailError = true;
             this.emailErrorMsg = "Email is required.";
@@ -136,46 +146,54 @@ export default {
         //make sure email OR password are not empty
         if( this.email != "" && this.password != "" ) {
 
-            // const instance = axios.create({
-            //     baseURL: 'http://localhost:9000http://localhost:9000',
-            //     timeout: 2000,
-            // });
+            const instance = axios.create({
+                baseURL: 'http://localhost:3300/',
+                timeout: 2000,
+            });
 
-            // try {
-                axios.post( "http://127.0.0.1:3300/api/v1/auth/login", {
+            try {
+                instance.post( "api/v1/auth/login", null, { params: {
                     email: this.email,
                     password: this.password
-                }
+                } }
                 ).then( (response) => {
                     if( response && response.data && response.data.token != "" )
                     {
-                        this.output = "Authentication complete"
                         this.$store.commit( `auth/${SET_JWT_TOKEN}`, response.data.token );
                         this.$store.commit( `auth/${SET_AUTHENTICATION}`, true );
                         this.$store.commit( `auth/${SET_USER_INFO}`, response.data.user );
 
-                        this.$router.push( '/home')
+                        this.$router.push( { name: 'main'} )
                     } else {
                       this.$store.commit("setErrorMessage", "Unexpected error. Refresh the page and try again." );
                       console.log( response )
                     }
-                }).catch((errors) => {
-                    this.$store.commit( `auth/${SET_AUTHENTICATION}`, false );
-                    this.$store.commit( `auth/${SET_JWT_TOKEN}`, "" );
-                    this.$store.commit( `auth/${SET_USER_INFO}`, {} );
+                }).catch((error) => {
+                    if( error.code == "ERR_BAD_REQUEST" )
+                    {
+                        this.LoginError = "The email address and password do not match our data. Please try again or reset your password.";
+                        this.isLoginError = true;
+                    } else if( error.code = "ECONNABORTED" ) {
+                        this.$store.commit( `auth/${SET_AUTHENTICATION}`, false );
+                        this.$store.commit( `auth/${SET_JWT_TOKEN}`, "" );
+                        this.$store.commit( `auth/${SET_USER_INFO}`, {} );
 
-                    this.$store.commit("setErrorMessage", "Can't reach the server." );
+                        this.$store.commit("setErrorMessage", "Can't reach the server." );
 
-                    console.log(errors);
+                        setTimeout( () => {
+                            this.$store.commit("setErrorMessage", "" );
+                        }, 100);
+                    }
+                    console.log(error);
                 });
 
                 console.log(new Date().toUTCString());
                 console.log("post call passed")
-            // }
-            // catch (err) {
-            //     console.log(new Date().toUTCString());
-            //     console.log("post call failed")
-            // }
+            }
+            catch (err) {
+                console.log(new Date().toUTCString());
+                console.log("post call failed")
+            }
         } else {
             if( this.email == "" )
             {

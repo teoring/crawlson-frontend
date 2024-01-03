@@ -20,7 +20,7 @@ const routes =  [
             if( store.state.auth.isLoggedIn ) {
                 console.log( "Redirect" )
 
-                next( { name: 'home' } );
+                next( { name: 'main' } );
                 // window.location.href = "/home"
             } else {
                 next();
@@ -28,9 +28,9 @@ const routes =  [
         }
   },
   {
-    path: "/home",
-    name: 'home',
-    component: () => import('../components/WelcomeView.vue'),
+    path: "/#/",
+    name: 'main',
+    component: () => import('../components/MainPage.vue'),
     meta: {
         requiresAuth: true
     },
