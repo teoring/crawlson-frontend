@@ -2,18 +2,13 @@
     <div class="container">
         <div class="topbard">
             <img class="logo" src="/logo_2.png" alt="logo">
-            <div class="button-holder">
-                <button class="p-link layout-topbar-button"><i class="pi pi-l pi-calendar"></i><span></span></button>
-                <button class="p-link layout-topbar-button"><i class="pi pi-l pi-user"></i><span></span></button>
-                <button class="p-link layout-topbar-button"><i class="pi pi-l pi-cog"></i><span></span></button>
-            </div>
         </div>
 
         <div class="main-container">
             <div class="main-area">
                 <div class="card">
                     <h5>Recent houses</h5>
-                    <DataView :value="houses" :layout="layout">
+                    <DataView :value="houses" :layout="layout" :paginator="true" :rows="9">
                         <template #header>
                             <div class="flex justify-content-end">
                                 <DataViewLayoutOptions v-model="layout" />
@@ -47,29 +42,41 @@
 
                         <template #grid="slotProps">
                             <div class="grid grid-nogutter">
-                                <div v-for="(item, index) in slotProps.items" :key="index" class="col-12 sm:col-6 lg:col-12 xl:col-4 p-2">
+                                <div v-for="(item, index) in slotProps.items" :key="index" class="col-12 sm:col-6 lg:col-12 xl:col-4 p-3">
                                     <div class="p-3 border-1 surface-border surface-card border-round">
+
                                         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
-                                            <div class="flex align-items-center gap-2">
+                                            <div class="flex align-items-center gap-2 p-1 py-3 pl-2">
                                                 <i class="pi pi-map"></i>
-                                                <span class="font-semibold">{{ item.origin }}</span>
+                                                <span class="font-semibold">{{ item.origin }} | 10 Jan 2024</span>
                                             </div>
+                                            <Tag v-if="item.energy_label" icon="pi pi-tag" rounded=true :severity="getSeverity(item.energy_label)" :value="item.energy_label" ></Tag>
                                         </div>
-                                        <div class="flex flex-column align-items-center gap-3 py-4">
-                                            <img class="w-9 shadow-1 border-round" :src="`http://localhost/house_images/${item.key}.jpg`" />
+
+                                        <div class="flex flex-column align-items-center gap-3 py-1">
+                                            <img class="w-10 shadow-1 border-round" :src="`http://localhost/house_images/${item.key}.jpg`" />
                                             <div class="text-xl font-bold">
                                                 {{ item.address }}
                                             </div>
-                                            <div class="text-lg ">
-                                                <i class="pi pi-home"></i>
+                                            <div class="text-lg">
+                                                <i class="pi pi-map-marker"></i>
                                                 {{item.city}}, {{item.postcode}}
                                             </div>
-                          
+                                            <div class="text-lg">
+                                                <Chip v-if="item.living_area" :label="item.living_area" class="prop-chip pl-3 pr-3 mr-2" image="/area-icon.svg">
+                                                </Chip>
+                                                <Chip v-if="item.construction_year" :label="item.construction_year" class="prop-chip pl-3 pr-3 mr-2" image="/const-year-icon.svg">
+                                                </Chip>
+                                            </div>
 
                                         </div>
-                                        <div class="flex align-items-center justify-content-between">
+
+                                        <div class="flex align-items-center justify-content-between pl-3 pt-2 ">
                                             <span class="text-xl font-semibold">{{ item.price }}</span>
                                             <a :href="item.url" target="_blank" rel="noopener noreferrer">
+                                                <Button icon="pi pi-map" rounded></Button>
+                                            </a>
+                                            <a :href="item.url" target="_blank" style="pl-1"  rel="noopener noreferrer">
                                                 <Button icon="pi pi-arrow-right" rounded></Button>
                                             </a>
                                         </div>
@@ -197,6 +204,10 @@
         layout: ref('grid'),
         houses: [],
         dashboard_loading: true,
+        sortOptions: ref([
+            { label: 'Price High to Low', value: '!price' },
+            { label: 'Price Low to High', value: 'price' }
+        ]),
         items: ref([
             {
                 label: 'Home',
@@ -224,10 +235,24 @@
       }
     },
     methods:{
-      getUsername() {
-        let user = this.$store.getters[`auth/${GET_USER_INFO}`];
-        return user.first_name + " " + user.last_name;
-    }, 
+        getUsername() {
+            let user = this.$store.getters[`auth/${GET_USER_INFO}`];
+            return user.first_name + " " + user.last_name;
+        }, 
+        getSeverity(label) {
+            if( label.charAt(0) == 'A' )
+                return 'success';
+            if( label.charAt(0) == 'B' )
+                return 'success';
+            if( label.charAt(0) == 'C' )
+                return 'success';
+            if( label.charAt(0) == 'D' )
+                return 'warning';
+            if( label.charAt(0) == 'E' )
+                return 'warning';
+
+            return "error";
+        }
     }
   }
   </script>
@@ -370,5 +395,19 @@ h5 {
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     text-align: left;
     font-family: "Inter var", sans-serif;
+}
+.layout-menu .layout-root-menuitem>.layout-menuitem-root-text {
+    font-size: .857rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--surface-900);
+    margin: 0.75rem 0;
+}
+.prop-chip {
+    font-size: 0.9rem;
+}
+.prop-chip img {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 </style>

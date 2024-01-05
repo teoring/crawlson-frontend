@@ -59,6 +59,8 @@ import { useToast } from 'primevue/usetoast';
 import { watch } from "vue";
 import { useStore } from "vuex";
 
+import Config from '../config'
+
 export default {
     setup() {
         const store = useStore();
@@ -147,8 +149,8 @@ export default {
         if( this.email != "" && this.password != "" ) {
 
             const instance = axios.create({
-                baseURL: 'http://localhost:3300/',
-                timeout: 2000,
+                baseURL: Config.serverAddr,
+                timeout: 4000,
             });
 
             try {
@@ -174,6 +176,7 @@ export default {
                         this.LoginError = "The email address and password do not match our data. Please try again or reset your password.";
                         this.isLoginError = true;
                     } else if( error.code = "ECONNABORTED" ) {
+                        console.log( error )
                         this.$store.commit( `auth/${SET_AUTHENTICATION}`, false );
                         this.$store.commit( `auth/${SET_JWT_TOKEN}`, "" );
                         this.$store.commit( `auth/${SET_USER_INFO}`, {} );
@@ -186,13 +189,9 @@ export default {
                     }
                     console.log(error);
                 });
-
-                console.log(new Date().toUTCString());
-                console.log("post call passed")
             }
-            catch (err) {
-                console.log(new Date().toUTCString());
-                console.log("post call failed")
+            catch(error) {
+                console.log(error);
             }
         } else {
             if( this.email == "" )

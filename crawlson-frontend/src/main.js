@@ -35,6 +35,7 @@ import DataView from 'primevue/dataview';
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions'
 import Skeleton from 'primevue/skeleton';
 import Tag from 'primevue/tag';
+import Chip from 'primevue/chip'
 
 const app = createApp(App);
 
@@ -47,6 +48,7 @@ app.directive('styleclass', StyleClass);
 app.directive('focustrap', FocusTrap);
 app.directive('animateonscroll', AnimateOnScroll);
 
+app.component('Chip', Chip);
 app.component('Tag', Tag);
 app.component('Skeleton', Skeleton);
 app.component('DataViewLayoutOptions', DataViewLayoutOptions);
