@@ -6,7 +6,7 @@ import 'primevue/resources/themes/lara-light-purple/theme.css'
 import "primevue/resources/primevue.min.css"; /* Deprecated */
 
 import store from './store'
-import router from './router'
+import { router  } from './router'
 
 import PrimeVue from 'primevue/config';
 import Button from "primevue/button"
@@ -36,6 +36,8 @@ import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions'
 import Skeleton from 'primevue/skeleton';
 import Tag from 'primevue/tag';
 import Chip from 'primevue/chip'
+import Checkbox from 'primevue/checkbox';
+import Dropdown from 'primevue/dropdown';
 
 const app = createApp(App);
 
@@ -48,6 +50,8 @@ app.directive('styleclass', StyleClass);
 app.directive('focustrap', FocusTrap);
 app.directive('animateonscroll', AnimateOnScroll);
 
+app.component('Dropdown', Dropdown);
+app.component('Checkbox', Checkbox);
 app.component('Chip', Chip);
 app.component('Tag', Tag);
 app.component('Skeleton', Skeleton);

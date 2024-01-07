@@ -1,6 +1,9 @@
 import { createWebHistory, createRouter } from "vue-router";
 import store from '@/store/index';
 
+// import AppHeader from '../components/uikit/AppHeader'
+// import SettingsView from '../components/SettingsView'
+
 const routes =  [
     {
         path: "/",
@@ -21,7 +24,6 @@ const routes =  [
                 console.log( "Redirect" )
 
                 next( { name: 'main' } );
-                // window.location.href = "/home"
             } else {
                 next();
             }
@@ -40,9 +42,25 @@ const routes =  [
         next();
     }
   },
+  {
+    path: "/settings",
+    name: 'settings',
+    components: {
+        default: () => import('../components/SettingsView.vue'),
+        appheader:  () => import('../components/uikit/AppHeader.vue'),
+    },
+    meta: {
+        requiresAuth: true
+    },
+
+    beforeEnter: ( to, from, next ) => {
+        console.log( "store.state.auth.isLoggedIn: " + store.state.auth.isLoggedIn );
+        next();
+    }
+  },
 ]
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: routes,
   linkActiveClass: 'active'
@@ -61,5 +79,3 @@ router.beforeEach((to, from, next) => {
       next() // does not require auth, make sure to always call next()!
     }
   })
-
-export default router;
