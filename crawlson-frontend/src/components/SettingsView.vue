@@ -1,14 +1,176 @@
 <template>
     <div class="container">
-        <div class="main-container">
-            <div class="main-area">
-                <div class="card pt-3">
-                    <router-view></router-view>
-                    <router-view name="appheader"></router-view>
-                    <router-view></router-view>
-                </div>
-            </div>
+            <div class="main-container">
+                <div class="grid p-fluid">
+                        <div class="col-12 md:col-6">
+                            <div class="card">
+                                <h5 class="m-0 pb-3">Price</h5>
+                                <div class="grid formgrid">
+                                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                                        <label for="minHousePrice" class="font-bold block mb-2"> Min. house price </label>
+                                        <InputNumber mode="currency" :min="0" currency="EUR" showButtons :step="50000" v-model="user.min_house_price" inputId="minHousePrice" />
+                                    </div>
+                                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                                        <label for="maxHousePrice" class="font-bold block mb-2"> Max. house price </label>
+                                        <InputNumber v-model="user.max_house_price" showButtons :min="0" :step="50000" mode="currency" currency="EUR" inputId="maxHousePrice" ></InputNumber>
+                                    </div>
+                                </div>
 
+                                <div class="grid formgrid pt-5">
+                                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                                        <label for="minLivingArea" class="font-bold block mb-2"> Min. living area </label>
+                                        <InputNumber  :min="0" :useGrouping="false" v-model="user.min_living_area" inputId="minLivingArea" />
+                                    </div>
+                                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                                        <label for="minConstructionYear" class="font-bold block mb-2"> Min. construction year</label>
+                                        <InputNumber  :min="0" :useGrouping="false" v-model="user.min_construction_year" inputId="minConstructionYear" />
+                                    </div>
+                                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                                        <label for="minEnergyLabel" class="font-bold block mb-2"> Min. energy label</label>
+                                        <InputText :min="0" :useGrouping="false" v-model="user.min_energy_label" inputId="minEnergyLabel" />
+                                    </div>
+                                </div>
+                                
+                                <h5 class="mt-3">Icons</h5>
+                                <div class="grid formgrid">
+                                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                                        <span class="p-input-icon-left">
+                                            <i class="pi pi-user" />
+                                            <InputText type="text" placeholder="Username" />
+                                        </span>
+                                    </div>
+                                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                                        <span class="p-input-icon-right">
+                                            <InputText type="text" placeholder="Search" />
+                                            <i class="pi pi-search" />
+                                        </span>
+                                    </div>
+                                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                                        <span class="p-input-icon-left p-input-icon-right">
+                                            <i class="pi pi-user" />
+                                            <InputText type="text" placeholder="Search" />
+                                            <i class="pi pi-search" />
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <h5>Float Label</h5>
+                                <span class="p-float-label">
+                                    <InputText id="username" type="text" v-model="floatValue" />
+                                    <label for="username">Username</label>
+                                </span>
+
+                                <h5>Textarea</h5>
+                                <Textarea placeholder="Your Message" :autoResize="true" rows="3" cols="30" />
+
+                                <h5>AutoComplete</h5>
+                                <AutoComplete placeholder="Search" id="dd" :dropdown="true" :multiple="true" v-model="selectedAutoValue" :suggestions="autoFilteredValue" @complete="searchCountry($event)" field="name" />
+
+                                <h5>Calendar</h5>
+                                <Calendar :showIcon="true" :showButtonBar="true" v-model="calendarValue"></Calendar>
+
+                                <h5>Spinner</h5>
+                                <InputNumber v-model="inputNumberValue" showButtons mode="decimal"></InputNumber>
+
+                                <h5>Chips</h5>
+                                <Chips v-model="chipsValue" />
+                            </div>
+
+                           
+                        </div>
+
+                        <div class="col-12 md:col-6">
+                            <div class="card">
+                                <h5>RadioButton</h5>
+                                <div class="grid">
+                                    <div class="col-12 md:col-4">
+                                        <div class="field-radiobutton mb-0">
+                                            <RadioButton id="option1" name="option" value="Chicago" v-model="radioValue" />
+                                            <label for="option1">Chicago</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 md:col-4">
+                                        <div class="field-radiobutton mb-0">
+                                            <RadioButton id="option2" name="option" value="Los Angeles" v-model="radioValue" />
+                                            <label for="option2">Los Angeles</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 md:col-4">
+                                        <div class="field-radiobutton mb-0">
+                                            <RadioButton id="option3" name="option" value="New York" v-model="radioValue" />
+                                            <label for="option3">New York</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h5>Checkbox</h5>
+                                <div class="grid">
+                                    <div class="col-12 md:col-4">
+                                        <div class="field-checkbox mb-0">
+                                            <Checkbox id="checkOption1" name="option" value="Chicago" v-model="checkboxValue" />
+                                            <label for="checkOption1">Chicago</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 md:col-4">
+                                        <div class="field-checkbox mb-0">
+                                            <Checkbox id="checkOption2" name="option" value="Los Angeles" v-model="checkboxValue" />
+                                            <label for="checkOption2">Los Angeles</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 md:col-4">
+                                        <div class="field-checkbox mb-0">
+                                            <Checkbox id="checkOption3" name="option" value="New York" v-model="checkboxValue" />
+                                            <label for="checkOption3">New York</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h5>Input Switch</h5>
+                                <InputSwitch v-model="switchValue" />
+                            </div>
+
+                            <div class="card">
+                                <h5>Listbox</h5>
+                                <Listbox v-model="listboxValue" :options="listboxValues" optionLabel="name" :filter="true" />
+
+                                <h5>Dropdown</h5>
+                                <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Select" />
+
+                                <h5>MultiSelect</h5>
+                                <MultiSelect v-model="multiselectValue" :options="multiselectValues" optionLabel="name" placeholder="Select Countries" :filter="true">
+                                    <template #value="slotProps">
+                                        <div class="inline-flex align-items-center py-1 px-2 bg-primary text-primary border-round mr-2" v-for="option of slotProps.value" :key="option.code">
+                                            <span :class="'mr-2 flag flag-' + option.code.toLowerCase()" style="width: 18px; height: 12px" />
+                                            <div>{{ option.name }}</div>
+                                        </div>
+                                        <template v-if="!slotProps.value || slotProps.value.length === 0">
+                                            <div class="p-1">Select Countries</div>
+                                        </template>
+                                    </template>
+                                    <template #option="slotProps">
+                                        <div class="flex align-items-center">
+                                            <span :class="'mr-2 flag flag-' + slotProps.option.code.toLowerCase()" style="width: 18px; height: 12px" />
+                                            <div>{{ slotProps.option.name }}</div>
+                                        </div>
+                                    </template>
+                                </MultiSelect>
+
+                                <h5>TreeSelect</h5>
+                                <TreeSelect v-model="selectedNode" :options="treeSelectNodes" placeholder="Select Item"></TreeSelect>
+                            </div>
+
+                            <div class="card">
+                                <h5>ToggleButton</h5>
+                                <ToggleButton v-model="toggleValue" onLabel="Yes" offLabel="No" :style="{ width: '10em' }" />
+
+                                <h5>SelectButton</h5>
+                                <SelectButton v-model="selectButtonValue1" :options="selectButtonValues1" optionLabel="name" />
+
+                                <h5>SelectButton - Multiple</h5>
+                                <SelectButton v-model="selectButtonValue2" :options="selectButtonValues2" optionLabel="name" :multiple="true" />
+                            </div>
+                        </div>
+                    </div>
             <div class="footer">© Crawlson 2024</div>
         </div>
         <Menu class="sidebar" :model="items" />
@@ -67,14 +229,7 @@ export default {
     },
     data() {
         return {
-            layout: ref("grid"),
-            houses: [],
-            dashboard_loading: true,
-            showAllHouses: false,
-            sortOptions: ref([
-                { label: "Price High to Low", value: "!price" },
-                { label: "Price Low to High", value: "price" },
-            ]),
+            user: {},
             items: ref([
                 {
                     label: "Home",
@@ -225,11 +380,11 @@ body {
     border-top: 1px solid var(--surface-border);
     font-weight: 500 !important;
 }
+
 .card {
     background: var(--surface-card);
     border: 1px solid var(--surface-border);
-    padding: 2rem;
-    margin-bottom: 2rem;
+    margin-bottom: rem;
     box-shadow: var(--card-shadow);
     border-radius: 12px;
 }
@@ -256,5 +411,16 @@ body {
     font-weight: 700;
     color: var(--surface-900);
     margin: 0.75rem 0;
+}
+h5 {
+    margin: 1.5rem 0 1rem;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--surface-900);
+    font-size: 1.25rem;
+}
+.p-menu {
+    border-radius: 12px;
 }
 </style>

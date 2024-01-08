@@ -38,6 +38,8 @@ import Tag from 'primevue/tag';
 import Chip from 'primevue/chip'
 import Checkbox from 'primevue/checkbox';
 import Dropdown from 'primevue/dropdown';
+import Toolbar from 'primevue/toolbar';
+import InputNumber from 'primevue/inputnumber';
 
 const app = createApp(App);
 
@@ -50,6 +52,8 @@ app.directive('styleclass', StyleClass);
 app.directive('focustrap', FocusTrap);
 app.directive('animateonscroll', AnimateOnScroll);
 
+app.component('InputNumber', InputNumber);
+app.component('Toolbar', Toolbar);
 app.component('Dropdown', Dropdown);
 app.component('Checkbox', Checkbox);
 app.component('Chip', Chip);

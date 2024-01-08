@@ -7,13 +7,17 @@
         <div class="main-container">
             <div class="main-area">
                 <div class="card pt-3">
-                    <DataView :value="selected_houses" :layout="layout" :paginator="true" :rows="9">
+                    <DataView :value="selected_houses" @page="onDataViewPageChanged()" :layout="layout" :paginator="true" :rows="12">
                         <template #header>
                             <div>
-                                <div class="flex align-items-center">
-                                    <h7>Recent houses</h7>
-                                </div>
+                                <!-- <div class="flex align-items-center">
+                                    <h5>Recent houses</h5>
+                                </div> -->
                                 <div class="flex justify-content-end align-items-center gap-3">
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search" />
+                                        <InputText v-model="searchInput" v-tooltip.top="'Enter address, city, postcode, price, date or source.'" placeholder="Search" />
+                                    </span>
                                     <Dropdown v-model="sortKey" :options="sortOptions" optionLabel="label" placeholder="Matched houses" @change="onFilterChange($event)" />
                                     <DataViewLayoutOptions v-model="layout" />
                                 </div>
@@ -44,7 +48,7 @@
                                                     <span class="flex align-items-center gap-2">
                                                         <i class="pi pi-map"></i>
                                                         <span class="font-semibold">{{ item.origin }} |</span>
-                                                        <span class="">{{ tsToDate(item.ts) }}</span>
+                                                        <span>{{ tsToDate( item.first_seen ) }} | </span>
                                                     </span>
                                                 </div>
                                             </div>
@@ -66,17 +70,23 @@
                                     :key="index"
                                     class="col-12 sm:col-6 lg:col-12 xl:col-4 p-3"
                                 >
-                                    <div class="p-3 border-1 surface-border surface-card border-round">
+                                    <div class="p-3 py-2 border-1 surface-border surface-card border-round">
                                         <div class="flex flex-wrap align-items-center justify-content-between">
                                             <div class="flex align-items-center gap-2 p-1 py-3 pl-2">
+                                                <Tag class="" v-tooltip:bottom="{ value: getMatchTooltip(item.assessment),
+                                                    pt: {
+                                                        }
+                                                    }" v-if="item.assessment && item.assessment" :icon="getMatchIcon(item.assessment)" :severity="getMatchSeverity(item.assessment)" :value="getNormalizedMatchLabel(item.assessment)"></Tag>
+                                                <span class=""> | </span>
                                                 <i class="pi pi-map"></i>
-                                                <span class="font-semibold">{{ item.origin }} | </span>
-                                                <span class="">{{ tsToDate(item.ts) }}</span>
+                                                <span class="">{{ item.origin }} | </span>
+                                                <span class="">{{ tsToDate(item.first_seen) }}</span>
+
                                             </div>
                                             <Tag
                                                 v-if="item.energy_label"
-                                                icon="pi pi-tag p-1 py-1"
-                                                :severity="getSeverity(item.energy_label)"
+                                                icon="pi pi-tag pr-1"
+                                                :class="getEnergyLabelClass(item.energy_label)"
                                                 :value="item.energy_label"
                                             ></Tag>
                                         </div>
@@ -84,12 +94,12 @@
                                         <div class="flex flex-column align-items-center gap-2">
                                             <a :href="item.url" target="_blank" rel="noopener noreferrer">
                                                 <img
-                                                    class="border-round object-fill w-10 max-h-1"
+                                                    class="border-round object-fill w-11 max-h-1"
                                                     :src="`http://localhost/house_images/${item.key}.jpg`"
                                                 />
                                             </a>
                                             <div>
-                                                <h5 class="m-0 pt-2">
+                                                <h5 class="m-0 pt-2 align-middle">
                                                     {{ item.address }}
                                                 </h5>
                                             </div>
@@ -115,19 +125,22 @@
                                             </div>
                                         </div>
 
-                                        <div class="flex align-items-center justify-content-between pl-3 pt-2">
+                                        <div class="flex align-items-center justify-content-between pl-3 pt-4">
                                             <span class="text-xl font-semibold">{{ item.price }}</span>
                                             <div class="flex justify-content-between pr-2 m-1">
+                                                <div class="pr-2">
+                                                    <Button text   size="small" class="p-2"  @click="bookmarkHouse()" icon="pi pi-bookmark"></Button>
+                                                </div>
                                                 <a
                                                     :href="item.url"
-                                                    class="pr-3"
+                                                    class="pr-2"
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 >
-                                                    <Button icon="pi pi-map"></Button>
+                                                    <Button outlined size="small" class="p-2" icon="pi pi-map"></Button>
                                                 </a>
                                                 <a :href="item.url" target="_blank" rel="noopener noreferrer">
-                                                    <Button icon="pi pi-arrow-right"></Button>
+                                                    <Button size="small" class="p-2" icon="pi pi-arrow-right"></Button>
                                                 </a>
                                             </div>
                                         </div>
@@ -254,6 +267,35 @@ export default {
             }
         );
     },
+    watch: { searchInput( input )
+        {
+            console.log( input );
+
+            input = input.toLowerCase();
+
+            this.onFilterChange( { value: { value: this.selected_filter } } );
+
+            let foundHouses = this.selected_houses;
+
+            if( input != "" ) {
+                foundHouses = foundHouses.filter( function( house ) {
+                    let formatted = useDateFormat( house.first_seen, "DD MMM HH:mm").value;
+
+                    let found = house.address.toLowerCase().search( input )  != -1 ||
+                                house.city.toLowerCase().search( input )     != -1 ||
+                                house.postcode.toLowerCase().search( input ) != -1 ||
+                                house.origin.toLowerCase().search( input )   != -1 ||
+                                house.price.toLowerCase().search( input )     != -1 ||
+                                formatted.toLowerCase().search( input )      != -1;
+                    return found;
+                });
+
+                this.selected_houses = foundHouses;
+            }
+
+            this.selected_houses = foundHouses;
+        }
+    },
     beforeMount() {
         const instance = axios.create({
             baseURL: Config.serverAddr,
@@ -271,7 +313,13 @@ export default {
                 .then( (response) => {
                     if( response && response.data && response.data.data && response.data.data.houses ) {
                         _this.stored_houses = response.data.data.houses;
+                        _this.assessments = response.data.data.assessments;
+
+                        this.mergeAssessmentsWithHouses();
+                        this.displayMatchedHouses();
+
                         _this.dashboard_loading = false;
+
                     } else {
                         this.showToast( "error", "Unexpected error. Refresh the page and try again." );
                     }
@@ -289,12 +337,16 @@ export default {
             layout: ref("grid"),
             stored_houses: [],
             selected_houses: [],
+            selected_filter: "matched_houses",
+            assessments: [],
             dashboard_loading: true,
             showAllHouses: false,
+            searchInput: "",
             sortOptions: ref([
                 { label: "Matched houses", value: "matched_houses" },
                 { label: "All houses", value: "all_houses" },
             ]),
+            sortKey: ref(),
             items: ref([
                 {
                     label: "Home",
@@ -333,15 +385,16 @@ export default {
     },
     methods: {
         onFilterChange(event) {
-            console.log( event );
+            console.log(event)
             const value = event.value.value;
-            const sortValue = event.value;
+            console.log(value)
+
+            this.selected_filter = value;
 
             if( value == "all_houses" ) {
                 this.selected_houses = this.stored_houses;
-            } else {
-                this.selected_houses = [];
-                
+            } else if( value == "matched_houses" ) {
+                this.displayMatchedHouses();
             }
         },
         showToast( severity, message ){
@@ -366,20 +419,73 @@ export default {
             const formatted = useDateFormat(ts, "DD MMM HH:mm");
             return formatted.value;
         },
-        getSeverity(label) {
-            if (label.charAt(0) == "A") return "success";
-            if (label.charAt(0) == "B") return "success";
-            if (label.charAt(0) == "C") return "success";
-            if (label.charAt(0) == "D") return "warning";
-            if (label.charAt(0) == "E") return "warning";
+        getEnergyLabelClass(label) {
+            if (label.startsWith("A++") || label.startsWith("A_PLUS_PLUS") ) return "p-tag-a-pp";
+            if (label.startsWith("A+") || label.startsWith("A_PLUS") ) return "p-tag-a-p";
+            if (label.charAt( 0 ) == "A" ) return "p-tag-a";
+            if (label.charAt(0) == "B") return "p-tag-b";
+            if (label.charAt(0) == "C") return "p-tag-c";
+            if (label.charAt(0) == "D") return "p-tag-d";
 
-            return "error";
+            return "p-tag-e";
         },
+        mergeAssessmentsWithHouses() {
+            for( let i = 0; i < this.stored_houses.length; i++ ) {
+                let house_ = this.stored_houses[i];
+                let assessment = this.assessments.find( (assessment) => assessment.house_key == house_.key );
+                if( assessment != undefined ) {
+                    this.stored_houses[i].assessment = assessment;
+                }
+            }
+        },
+        displayMatchedHouses() {
+            let matchedHouses = this.stored_houses.filter( function( house ) {
+                return house.assessment != undefined && house.assessment.match == true;
+            });
+
+            this.selected_houses = matchedHouses;
+        },
+        getMatchTooltip( assessment ) {
+            if( assessment && assessment.reason ) {
+                return assessment.reason;
+            }
+            return "";
+        },
+        getMatchIcon( assessment ) {
+            if( assessment && assessment.category ) {
+                if( assessment.category == "match" ) { return "pi pi-check"; }
+            }
+            return "pi pi-times";
+        },
+        getMatchSeverity( assessment ) {
+            if( assessment && assessment.category ) {
+                if( assessment.category == "match" ) { return "success"; }
+            }
+            return "danger";
+        },
+        getNormalizedMatchLabel( assessment ) {
+            if( assessment && assessment.category ) {
+                let category = assessment.category;
+                category = category.replace( "_", ' ' );
+                category = category.charAt( 0 ).toUpperCase() + category.slice( 1 );
+                return category;
+            }
+            return "";
+        },
+        onDataViewPageChanged() {
+            window.scrollTo( 0, 0 );
+        },
+        bookmarkHouse() {
+            
+        }
     },
 };
 </script>
 
 <style>
+.p-highlight {
+    font-weight: 800 !important;
+}
 .p-menu {
     border: 0px solid;
     border-radius: 0px;
@@ -398,11 +504,9 @@ export default {
     align-items: center;
     box-shadow: 0 3px 5px #00000005, 0 0 2px #0000000d, 0 1px 4px #00000014;
 }
-
 html {
     font-size: 14px;
 }
-
 .logo {
     height: 40px;
     padding-left: 30px;
@@ -434,6 +538,27 @@ html {
 }
 .pi-l {
     font-size: 1.5rem;
+}
+.p-tag-a-pp {
+    background-color: #63aa5a;
+}
+.p-tag-a-p {
+    background-color: #7bae4a;
+}
+.p-tag-a {
+    background-color: #bdd342;
+}
+.p-tag-b {
+    background-color: #ffe731;
+}
+.p-tag-c {
+    background-color: #fbb900;
+}
+.p-tag-d {
+    background-color: #fb8800;
+}
+.p-tag-e {
+    background-color: #e30613;
 }
 body {
     font-family: var(--font-family);
@@ -476,6 +601,9 @@ body {
     padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: var(--card-shadow);
+    border-radius: 12px;
+}
+.p-menu {
     border-radius: 12px;
 }
 .sidebar {
