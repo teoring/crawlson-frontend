@@ -18,7 +18,7 @@ onBeforeUnmount(() => {
 });
 
 const logoUrl = computed(() => {
-    return `/logo_2.png`;
+    return `/header_logo.png`;
 });
 
 const onTopBarMenuButton = () => {
@@ -63,7 +63,8 @@ const isOutsideClicked = (event) => {
 <template>
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
-            <img :src="logoUrl" alt="logo" />
+            <img :src="logoUrl" alt="logo" class="object-fill	" />
+            <span>CRAWLSON</span>
         </router-link>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">

@@ -35,6 +35,8 @@ import Toolbar from 'primevue/toolbar';
 import InputNumber from 'primevue/inputnumber';
 import Listbox from 'primevue/listbox';
 import SelectButton from 'primevue/selectbutton';
+import Dialog from 'primevue/dialog';
+import Divider from 'primevue/divider';
 
 import '@/assets/styles.scss';
 
@@ -47,6 +49,8 @@ app.directive('badge', BadgeDirective);
 app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
 
+app.component('Divider', Divider);
+app.component('Dialog', Dialog);
 app.component('Listbox', Listbox);
 app.component('InputNumber', InputNumber);
 app.component('Toolbar', Toolbar);

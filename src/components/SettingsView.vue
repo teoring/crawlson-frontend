@@ -4,7 +4,40 @@
             <div class="grid p-fluid">
                 <div class="col-12 md:col-6">
                     <div class="card">
-                        <h5 >Price</h5>
+                        <Dialog header="Configuring location preferences" v-model:visible="locationHelpDialogDisplay" :breakpoints="{ '960px': '75vw' }" :style="{ width: '35vw' }" :modal="true">
+                            <p class="line-height-3 m-0">
+                                <p>When Crawlson discovers house, it will calculate distance from the the travel address to house and will consider maximum distance to the house and/or maximum travel time settings before sending the notification.</p>
+
+                                You can set only one travel address and this setting will only work if you configure travel address, travel time and/or travel distance and commute mode.
+
+                                <Divider layout="horizontal" align="center">
+                                    <Tag class="mr-2" icon="pi pi-arrow-down" severity="primary" value="Example"></Tag>
+                                </Divider>
+
+                                It can enable you to search for house that is no more than 20 minutes walking distance from the city central station, or to search for house that is no more than 10 kilometers away from the international school.
+
+                                <Divider layout="horizontal" align="center">
+                                    <Tag class="mr-2" icon="pi pi-book" severity="info" value="Important"></Tag>
+                                </Divider>
+
+                                Note that the distance and travel time calculated based on selected commute mode. For example, for commute mode ‘driving’ - distance will be a car road length. If you want to have pure radius distance, configure commute mode to ‘walking’.
+                            </p>
+                            <template #footer>
+                                <Button label="Ok" @click="closeLocationHelpDialog" icon="pi pi-check" class="p-button-outlined" />
+                            </template>
+                        </Dialog>
+
+                        <Dialog header="Configuring location preferences" v-model:visible="citiesHelpDialogDisplay" :breakpoints="{ '960px': '75vw' }" :style="{ width: '35vw' }" :modal="true">
+                            <p class="line-height-3 m-0">
+                                When selected, Crawlson will only match houses that located in one of the selected cities.
+                            </p>
+                            <template #footer>
+                                <Button label="Ok" @click="closeCitiesHelpDialog" icon="pi pi-check" class="p-button-outlined" />
+                            </template>
+                        </Dialog>
+                        <h5 >
+                            Price
+                        </h5>
                         <div class="grid formgrid">
                             <div class="col-12 mb-2 lg:col-6 lg:mb-0">
                                 <label for="minHousePrice">Minimum house price</label>
@@ -20,28 +53,31 @@
 
                         <div class="grid formgrid">
                             <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                                <label for="minLivingArea">Minimal living area</label>
+                                <label for="minLivingArea">Min. living area</label>
                                 <InputGroup>
-                                    <InputNumber :min="0" :useGrouping="false" suffix=" m²" v-model="user.min_living_area" inputId="minLivingArea" />
+                                    <InputNumber :min="0" :useGrouping="false" suffix=" m²" placeholder="Any" v-model="user.min_living_area" inputId="minLivingArea" />
                                 </InputGroup>
 
                             </div>
                             <div class="col-12 mb-2 lg:col-4 lg:mb-0">
                                 <label for="minConstructionYear">Built after (year)</label>
                                 <InputGroup>
-                                    <InputNumber :min="0" :useGrouping="false" v-model="user.min_construction_year" inputId="minConstructionYear" />
+                                    <InputNumber :min="0" :useGrouping="false" placeholder="1880"  v-model="user.min_construction_year" inputId="minConstructionYear" />
                                 </InputGroup>
 
                             </div>
                             <div class="col-12 mb-2 lg:col-4 lg:mb-0">
                                 <label for="minEnergyLabel">Min. Energy label</label>
-                                <Dropdown v-model="user.min_energy_label" inputId="minEnergyLabel" optionLabel="name" :options="energyLabels" />
+                                <Dropdown v-model="user.min_energy_label" placeholder="G" inputId="minEnergyLabel" optionLabel="name" :options="energyLabels" />
                             </div>
                         </div>
                     </div>
 
                     <div class="card">
-                        <h5>Location</h5>
+                        <h5>
+                            Location
+                            <Button link class="pl-0 pb-1" icon="pi pi-question-circle" @click="openLocationHelpDialog" />
+                        </h5>
                         <div class="grid formgrid">
                             <div class="col-12 lg:col-10 lg:mb-0">
                                 <label for="TravelAddress">Travel address</label>
@@ -50,8 +86,10 @@
                                 </InputGroup>
                             </div>
                             <div class="col-12 lg:col-2 lg:mb-0">
-                                <label for="TravelAddress">Map</label>
+                                <label for="TravelAddress">Check</label>
+                                <a :href="getSelectedAddressGoogleMap()" target="_blank" rel="noopener noreferrer">
                                 <Button icon="pi pi-arrow-right"  target="_blank" rel="noopener noreferrer" :href="getSelectedAddressGoogleMap()"  :disabled="!user.travel_time_address" outlined />
+                                </a>
                             </div>
                         </div>
 
@@ -60,14 +98,14 @@
                             <div class="col-12 mb-2 lg:col-4 lg:mb-0">
                                 <label for="maxTravelTime">Max. travel time</label>
                                 <InputGroup>
-                                    <InputNumber suffix=" min" v-model="user.max_travel_time" :min="0" :useGrouping="false" inputId="maxTravelTime" />
+                                    <InputNumber suffix=" min" placeholder="Any" v-model="user.max_travel_time" :min="0" :useGrouping="false" inputId="maxTravelTime" />
                                 </InputGroup>
 
                             </div>
                             <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                                <label for="maxTravelDistance">Max distance</label>
+                                <label for="maxTravelDistance">Max. distance</label>
                                 <InputGroup>
-                                    <InputNumber :min="0" suffix=" km" :useGrouping="false" v-model="user.max_travel_distance" inputId="maxTravelDistance" />
+                                    <InputNumber :min="0" placeholder="Any" suffix=" km" :useGrouping="false" v-model="user.max_travel_distance" inputId="maxTravelDistance" />
                                 </InputGroup>
                             </div>
                             <div class="col-12 mb-2 lg:col-4 lg:mb-0">
@@ -80,10 +118,13 @@
 
                 <div class="col-12 md:col-6">
                     <div class="card">
-                        <h5>Cities</h5>
+                        <h5>
+                            Cities
+                            <Button link class="p-0" icon="pi pi-question-circle" @click="openCitiesHelpDialog" />
+                        </h5>
                         <div class="grid formgrid">
                             <div class="col-12 mb-2 lg:col-6 lg:mb-0">
-                                <Dropdown @change="onCityAdded" v-model="selectedCityFromList" filter :options="cityNames" optionLabel="name" optionValue="name"
+                                <Dropdown @change="onCityAdded" @filter="test" v-model="selectedCityFromList" filter :options="cityNames" optionLabel="name" optionValue="name"
                                     :virtualScrollerOptions="{ itemSize: 34 }" placeholder="Select a city" />
                             </div>
                             <div class="col-12 mb-2 lg:col-6 lg:mb-0">
@@ -158,6 +199,8 @@ export default {
             selectedCityFromAddedCities: null,
             cityNames: cityNames,
             user: this.$store.state.auth.user,
+            locationHelpDialogDisplay: false,
+            citiesHelpDialogDisplay: false,
             energyLabels: [
                 { name: "A+++", code: "a-ppp" },
                 { name: "A++", code: "a-pp" },
@@ -210,6 +253,22 @@ export default {
         },
         getSelectedAddressGoogleMap() {
             return "https://maps.google.com/?q=" + encodeURIComponent( this.user.travel_time_address );
+        },
+        test( event ) {
+            event.target._value = "AAA"
+            console.log( event );
+        },
+        openLocationHelpDialog() {
+            this.locationHelpDialogDisplay = true;
+        },
+        closeLocationHelpDialog() {
+            this.locationHelpDialogDisplay = false;
+        },
+        openCitiesHelpDialog() {
+            this.citiesHelpDialogDisplay = true;
+        },
+        closeCitiesHelpDialog() {
+            this.citiesHelpDialogDisplay = false;
         }
     },
 };
