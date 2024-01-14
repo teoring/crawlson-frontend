@@ -4,73 +4,89 @@ import store from '@/store/index';
 import AppLayout from '@/layout/AppLayout.vue';
 
 const routes =  [
+
     {
-        path: "/",
-        redirect: { path: "/login" }, // redirect property
-        component: () => import('../components/LoginView.vue'),
+        path: '/',
+        component: AppLayout,
+        children: [
+            {
+                path: "/dashboard",
+                name: 'dashboard',
+                component: () => import('../components/MainPage.vue'),
+                meta: {
+                    requiresAuth: true
+                },
+
+                beforeEnter: ( to, from, next ) => {
+                    console.log( "store.state.auth.isLoggedIn: " + store.state.auth.isLoggedIn );
+                    next();
+                }
+            },
+
+            {
+                path: '/trends',
+                component: AppLayout,
+                children: [
+                    {
+                        component: () => import('@/components/Trends.vue'),
+                        name: 'trends',
+                        path: '/trends',
+                    }
+                ]
+            },
+
+            {
+                path: "/settings",
+                name: 'settings',
+                components: {
+                    default: () => import('../components/SettingsView.vue'),
+                },
+                meta: {
+                    requiresAuth: true
+                },
+
+                beforeEnter: ( to, from, next ) => {
+                    console.log( "store.state.auth.isLoggedIn: " + store.state.auth.isLoggedIn );
+                    next();
+                }
+            },
+
+            {
+                path: "/account",
+                name: 'account',
+                components: {
+                    default: () => import('../components/AccountView.vue'),
+                },
+                meta: {
+                    requiresAuth: true
+                },
+
+                beforeEnter: ( to, from, next ) => {
+                    console.log( "store.state.auth.isLoggedIn: " + store.state.auth.isLoggedIn );
+                    next();
+                }
+            },
+        ]
     },
     {
         path: "/login",
         name: 'login',
-
         component: () => import('../components/LoginView.vue'),
 
         beforeEnter: ( to, from, next ) => {
             console.log( "store.state.auth.isLoggedIn: " + store.state.auth.isLoggedIn );
 
-            // check link param exit using route param method
             if( store.state.auth.isLoggedIn ) {
-                console.log( "Redirect" )
-
-                next( { name: 'main' } );
+                next( { name: 'dashboard' } );
             } else {
                 next();
             }
         }
-  },
-  {
-    path: "/#/",
-    name: 'main',
-    component: () => import('../components/MainPage.vue'),
-    meta: {
-        requiresAuth: true
     },
-
-    beforeEnter: ( to, from, next ) => {
-        console.log( "store.state.auth.isLoggedIn: " + store.state.auth.isLoggedIn );
-        next();
-    }
-  },
     {
-        path: '/trends',
-        component: AppLayout,
-        children: [
-            {
-                component: () => import('@/components/Trends.vue'),
-                name: 'trends',
-                path: '/trends',
-            }
-        ]
-    },
-  {
-    path: "/settings",
-    name: 'settings',
-    components: {
-        default: () => import('../components/SettingsView.vue'),
-    },
-    meta: {
-        requiresAuth: true
-    },
-
-    beforeEnter: ( to, from, next ) => {
-        console.log( "store.state.auth.isLoggedIn: " + store.state.auth.isLoggedIn );
-        next();
+        path: '/:pathMatch(.*)*',
+        redirect: "/",
     }
-  },
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: "/",
-  }
 ]
 
 export const router = createRouter({

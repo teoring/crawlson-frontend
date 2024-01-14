@@ -33,6 +33,8 @@ import Checkbox from 'primevue/checkbox';
 import Dropdown from 'primevue/dropdown';
 import Toolbar from 'primevue/toolbar';
 import InputNumber from 'primevue/inputnumber';
+import Listbox from 'primevue/listbox';
+import SelectButton from 'primevue/selectbutton';
 
 import '@/assets/styles.scss';
 
@@ -45,6 +47,7 @@ app.directive('badge', BadgeDirective);
 app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
 
+app.component('Listbox', Listbox);
 app.component('InputNumber', InputNumber);
 app.component('Toolbar', Toolbar);
 app.component('Dropdown', Dropdown);
@@ -69,6 +72,7 @@ app.component('InputGroupAddon', InputGroupAddon);
 app.component('Image', Image);
 app.component('Menubar', Menubar);
 app.component('DataView', DataView);
+app.component('SelectButton', SelectButton );
 
 app.use(store)
 app.use(router)

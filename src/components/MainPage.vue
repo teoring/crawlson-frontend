@@ -1,22 +1,67 @@
 <template>
     <div class="container">
-        <div class="topbard">
-            <img class="logo" src="/logo_2.png" alt="logo" />
-        </div>
-
         <div class="main-container">
             <div class="main-area">
                 <div class="card pt-3">
-                    <DataView :value="selected_houses" @page="onDataViewPageChanged()" :layout="layout" :paginator="true" :rows="12">
+                    <DataView  :value="selected_houses" :paginator="true" :alwaysShowPaginator="false" @page="onDataViewPageChanged()" :layout="layout"  :rows="12">
+                        <template #empty>
+                                <div v-if="searchInput != null" class="pt-3">
+                                    Nothing was found
+                                </div>
+                                <div v-if="searchInput == null" class="flex flex-wrap pt-2">
+                                    <div class="w-full xl:w-4 p-3">
+                                        <Skeleton class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="5rem" class="mb-2"></Skeleton>
+                                        <Skeleton height="2rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" height="4rem"></Skeleton>
+                                    </div>
+                                    <div class="w-full xl:w-4 p-3">
+                                        <Skeleton class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="5rem" class="mb-2"></Skeleton>
+                                        <Skeleton height="2rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" height="4rem"></Skeleton>
+                                    </div>
+                                    <div class="w-full xl:w-4 p-3">
+                                        <Skeleton class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="5rem" class="mb-2"></Skeleton>
+                                        <Skeleton height="2rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" height="4rem"></Skeleton>
+                                    </div>
+                                </div>
+                                <div v-if="searchInput == null" class="flex flex-wrap">
+                                    <div class="w-full xl:w-4 p-3">
+                                        <Skeleton class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="5rem" class="mb-2"></Skeleton>
+                                        <Skeleton height="2rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" height="4rem"></Skeleton>
+                                    </div>
+                                    <div class="w-full xl:w-4 p-3">
+                                        <Skeleton class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="5rem" class="mb-2"></Skeleton>
+                                        <Skeleton height="2rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" height="4rem"></Skeleton>
+                                    </div>
+                                    <div class="w-full xl:w-4 p-3">
+                                        <Skeleton class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="5rem" class="mb-2"></Skeleton>
+                                        <Skeleton height="2rem" class="mb-2"></Skeleton>
+                                        <Skeleton width="10rem" height="4rem"></Skeleton>
+                                    </div>
+                                </div>
+                        </template>
+
                         <template #header>
                             <div>
-                                <!-- <div class="flex align-items-center">
-                                    <h5>Recent houses</h5>
-                                </div> -->
-                                <div class="flex justify-content-end align-items-center gap-3">
+                                <div class="flex  flex-wrap justify-content-end align-items-center gap-3">
                                     <span class="p-input-icon-left">
                                         <i class="pi pi-search" />
-                                        <InputText v-model="searchInput" v-tooltip.top="'Enter address, city, postcode, price, date or source.'" placeholder="Search" />
+                                        <InputText class="flex flex-wrap" v-model="searchInput" v-tooltip.top="'Enter address, city, postcode, price, date or source.'" placeholder="Search" />
                                     </span>
                                     <Dropdown v-model="sortKey" :options="sortOptions" optionLabel="label" placeholder="Matched houses" @change="onFilterChange($event)" />
                                     <DataViewLayoutOptions v-model="layout" />
@@ -149,73 +194,9 @@
                             </div>
                         </template>
                     </DataView>
-
-                    <div class="skeleton" v-if="dashboard_loading">
-                        <div class="skeleton-item">
-                            <Skeleton class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" class="mb-2"></Skeleton>
-                            <Skeleton width="5rem" class="mb-2"></Skeleton>
-                            <Skeleton height="2rem" class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" height="4rem"></Skeleton>
-                        </div>
-                        <div class="skeleton-item">
-                            <Skeleton class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" class="mb-2"></Skeleton>
-                            <Skeleton width="5rem" class="mb-2"></Skeleton>
-                            <Skeleton height="2rem" class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" height="4rem"></Skeleton>
-                        </div>
-                        <div class="skeleton-item">
-                            <Skeleton class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" class="mb-2"></Skeleton>
-                            <Skeleton width="5rem" class="mb-2"></Skeleton>
-                            <Skeleton height="2rem" class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" height="4rem"></Skeleton>
-                        </div>
-                        <div class="skeleton-item">
-                            <Skeleton class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" class="mb-2"></Skeleton>
-                            <Skeleton width="5rem" class="mb-2"></Skeleton>
-                            <Skeleton height="2rem" class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" height="4rem"></Skeleton>
-                        </div>
-                    </div>
-                    <div class="skeleton" v-if="dashboard_loading">
-                        <div class="skeleton-item">
-                            <Skeleton class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" class="mb-2"></Skeleton>
-                            <Skeleton width="5rem" class="mb-2"></Skeleton>
-                            <Skeleton height="2rem" class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" height="4rem"></Skeleton>
-                        </div>
-                        <div class="skeleton-item">
-                            <Skeleton class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" class="mb-2"></Skeleton>
-                            <Skeleton width="5rem" class="mb-2"></Skeleton>
-                            <Skeleton height="2rem" class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" height="4rem"></Skeleton>
-                        </div>
-                        <div class="skeleton-item">
-                            <Skeleton class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" class="mb-2"></Skeleton>
-                            <Skeleton width="5rem" class="mb-2"></Skeleton>
-                            <Skeleton height="2rem" class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" height="4rem"></Skeleton>
-                        </div>
-                        <div class="skeleton-item">
-                            <Skeleton class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" class="mb-2"></Skeleton>
-                            <Skeleton width="5rem" class="mb-2"></Skeleton>
-                            <Skeleton height="2rem" class="mb-2"></Skeleton>
-                            <Skeleton width="10rem" height="4rem"></Skeleton>
-                        </div>
-                    </div>
                 </div>
             </div>
-
-            <div class="footer">© Crawlson 2024</div>
         </div>
-        <Menu class="sidebar" :model="items" />
         <Toast position="bottom-right" group="br" />
     </div>
 </template>
@@ -341,46 +322,12 @@ export default {
             assessments: [],
             dashboard_loading: true,
             showAllHouses: false,
-            searchInput: "",
+            searchInput: null,
             sortOptions: ref([
                 { label: "Matched houses", value: "matched_houses" },
                 { label: "All houses", value: "all_houses" },
             ]),
             sortKey: ref(),
-            items: ref([
-                {
-                    label: "Home",
-                    items: [
-                        {
-                            label: "Dashboard",
-                            icon: "pi pi-home",
-                        },
-                        {
-                            label: "My house",
-                            icon: "pi pi-bookmark",
-                        },
-                        {
-                            label: "Settings",
-                            icon: "pi pi-cog",
-                            command: () => {  this.$router.push({ name: "settings" }); }
-                        },
-                    ],
-                },
-                {
-                    label: "Profile",
-                    items: [
-                        {
-                            label: "Account",
-                            icon: "pi pi-user",
-                        },
-                        {
-                            label: "Logout",
-                            icon: "pi pi-sign-out",
-                            command: this.logout
-                        },
-                    ],
-                },
-            ]),
         };
     },
     methods: {
@@ -501,61 +448,15 @@ export default {
 </script>
 
 <style>
-.p-highlight {
-    font-weight: 800 !important;
+.prop-chip {
+    font-size: 0.9rem;
 }
-.p-menu {
-    border: 0px solid;
-    border-radius: 0px;
+.prop-chip img {
+    width: 1.5rem;
+    height: 1.5rem;
 }
-.topbard {
-    position: fixed;
-    height: 5rem;
-    z-index: 997;
-    left: 0;
-    top: 0;
-    width: 100%;
-    padding: 0 2rem;
-    background-color: var(--surface-card);
-    transition: left 0.2s;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 3px 5px #00000005, 0 0 2px #0000000d, 0 1px 4px #00000014;
-}
-html {
-    font-size: 14px;
-}
-.logo {
-    height: 40px;
-    padding-left: 30px;
-}
-.p-link {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    color: var(--text-color-secondary);
-    border-radius: 50%;
-    width: 3.5rem;
-    height: 3rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    text-align: left;
-    background-color: transparent;
-    margin: 0;
-    padding: 0;
-    border: none;
-    cursor: pointer;
-    user-select: none;
-}
-.button-holder {
-    margin: 0 0 0 auto;
-    padding: 0;
-    list-style: none;
-    display: flex;
-}
-.pi-l {
-    font-size: 1.5rem;
+.p-dataview-header {
+    padding: 0.5rem 1rem;
 }
 .p-tag-a-pp {
     background-color: #63aa5a;
@@ -577,109 +478,5 @@ html {
 }
 .p-tag-e {
     background-color: #e30613;
-}
-body {
-    font-family: var(--font-family);
-    color: var(--text-color);
-    background-color: var(--surface-ground);
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-.p-submenu-header {
-    text-align: start;
-}
-.p-menuitem-link {
-    padding: 0.75rem 0.1rem;
-    padding-left: 30px;
-}
-.main-container {
-    margin-left: 232px;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    justify-content: space-between;
-    padding: 6.5rem 2rem 2rem 4rem;
-    transition: margin-left 0.2s;
-}
-.footer {
-    transition: margin-left 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 1rem;
-    border-top: 1px solid var(--surface-border);
-    font-weight: 500 !important;
-}
-.card {
-    background: var(--surface-card);
-    border: 1px solid var(--surface-border);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: var(--card-shadow);
-    border-radius: 12px;
-}
-.p-menu {
-    border-radius: 12px;
-}
-.sidebar {
-    border: 1px solid var(--surface-border);
-    border-radius: 12px;
-    position: fixed;
-    width: 230px;
-    height: calc(100vh - 9rem);
-    z-index: 999;
-    overflow-y: auto;
-    -webkit-user-select: none;
-    user-select: none;
-    top: 6.5rem;
-    left: 2rem;
-    transition: transform 0.2s, left 0.2s;
-    background-color: var(--surface-overlay);
-    padding: 0.5rem 1rem;
-    box-shadow: 0 3px 5px #00000005, 0 0 2px #0000000d, 0 1px 4px #00000014;
-}
-.skeleton-item {
-    width: 25% !important;
-    padding: 2rem !important;
-}
-.skeleton {
-    flex-wrap: wrap !important;
-    box-sizing: border-box;
-    display: flex !important;
-}
-.house-pic {
-    width: 100px;
-    float: left;
-}
-h5 {
-    font-size: 1.25rem;
-    margin: 0 0 1rem;
-    font-family: inherit;
-    font-weight: 500;
-    line-height: 1.2;
-    color: var(--surface-900);
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    text-align: left;
-    font-family: "Inter var", sans-serif;
-}
-.layout-menu .layout-root-menuitem > .layout-menuitem-root-text {
-    font-size: 0.857rem;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: var(--surface-900);
-    margin: 0.75rem 0;
-}
-.prop-chip {
-    font-size: 0.9rem;
-}
-.prop-chip img {
-    width: 1.5rem;
-    height: 1.5rem;
-}
-.p-dataview-header {
-    padding: 0.5rem 1rem;
 }
 </style>

@@ -3,7 +3,9 @@
         <div class="bg"></div>
         <div class="card flex justify-content-center">
             <div class="card-body">
-                <h3 style="margin-top: 10px">Login to <strong>Crawlson</strong></h3>
+                <h3 style="margin-top: 10px">Welcome to <strong>Crawlson</strong></h3>
+                <span class="text-600 font-medium">Sign in to continue</span>
+
                 <Form @submit="onSubmit" class="flex flex-column gap-2">
                     <div class="in3">
                         <InputGroup :class="{ 'p-invalid': emailErrorMsg }">
@@ -181,7 +183,7 @@ export default {
                                 this.$store.commit(`auth/${SET_AUTHENTICATION}`, true);
                                 this.$store.commit(`auth/${SET_USER_INFO}`, response.data.user);
 
-                                this.$router.push({ name: "main" });
+                                this.$router.push({ name: "dashboard" });
                             } else {
                                 this.$store.commit(
                                     "setErrorMessage",
