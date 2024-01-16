@@ -204,8 +204,12 @@
 <script>
 import { GET_USER_INFO, GET_JWT_TOKEN, SET_AUTHENTICATION, SET_JWT_TOKEN, SET_USER_INFO } from "../store/storeconstants";
 import { ref } from "vue";
-import Config from "../config";
+
+import config from "@/config";
+import { useCommunication } from "@/client";
+
 import axios from "axios";
+
 import { useDateFormat } from "@vueuse/core";
 import { useToast } from "primevue/usetoast";
 import { watch } from "vue";
@@ -278,40 +282,28 @@ export default {
         }
     },
     beforeMount() {
-        const instance = axios.create({
-            baseURL: Config.serverAddr,
-            timeout: 5000,
-            headers: {
-                authorization: "bearer " + this.$store.state.auth.jwtToken,
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
+        const { getClient } = useCommunication();
+        const client = getClient( config.dashboardGetHousesTimeoutSec );
+        let _this = this;
+
+        client.get("api/v1/dashboard/houses", null,  {} )
+            .then( (response) => {
+                if( response && response.data && response.data.data && response.data.data.houses ) {
+                    _this.stored_houses = response.data.data.houses;
+                    _this.assessments = response.data.data.assessments;
+
+                    this.mergeAssessmentsWithHouses();
+                    this.displayMatchedHouses();
+
+                    _this.dashboard_loading = false;
+
+                } else {
+                    this.showToast( "error", "Unexpected error. Refresh the page and try again." );
+                }
+
+        }).catch( (error) => {
+                // this.showToast( "error", "Can't reach the server." );
         });
-
-        try {
-            let _this = this;
-            instance
-                .get("api/v1/dashboard/houses", null, {})
-                .then( (response) => {
-                    if( response && response.data && response.data.data && response.data.data.houses ) {
-                        _this.stored_houses = response.data.data.houses;
-                        _this.assessments = response.data.data.assessments;
-
-                        this.mergeAssessmentsWithHouses();
-                        this.displayMatchedHouses();
-
-                        _this.dashboard_loading = false;
-
-                    } else {
-                        this.showToast( "error", "Unexpected error. Refresh the page and try again." );
-                    }
-
-                }).catch((error) => {
-                    this.showToast( "error", "Can't reach the server." );
-                    console.log(error);
-                });
-        } catch (error) {
-            console.log(error);
-        }
     },
     data() {
         return {

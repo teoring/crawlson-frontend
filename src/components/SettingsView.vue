@@ -6,21 +6,21 @@
                     <div class="card">
                         <Dialog header="Configuring location preferences" v-model:visible="locationHelpDialogDisplay" :breakpoints="{ '960px': '75vw' }" :style="{ width: '35vw' }" :modal="true">
                             <p class="line-height-3 m-0">
-                                <p>When Crawlson discovers house, it will calculate distance from the the travel address to house and will consider maximum distance to the house and/or maximum travel time settings before sending the notification.</p>
+                                <p>When Crawlson discovers a house, it will calculate distance from the travel address to the house and will consider maximum distance to the house and/or maximum travel time settings before sending the notification.</p>
 
-                                You can set only one travel address and this setting will only work if you configure travel address, travel time and/or travel distance and commute mode.
+                                You can set only one travel address and this setting will only work if you configure travel address, travel time and/or travel distance and travel mode.
 
                                 <Divider layout="horizontal" align="center">
                                     <Tag class="mr-2" icon="pi pi-arrow-down" severity="primary" value="Example"></Tag>
                                 </Divider>
 
-                                It can enable you to search for house that is no more than 20 minutes walking distance from the city central station, or to search for house that is no more than 10 kilometers away from the international school.
+                                It can enable you to search for the house that is no more than 20 minutes walking distance from the city central station, or to search for the house that is no more than 10 kilometers away from the international school.
 
                                 <Divider layout="horizontal" align="center">
                                     <Tag class="mr-2" icon="pi pi-book" severity="info" value="Important"></Tag>
                                 </Divider>
 
-                                Note that the distance and travel time calculated based on selected commute mode. For example, for commute mode ‘driving’ - distance will be a car road length. If you want to have pure radius distance, configure commute mode to ‘walking’.
+                                Note that the distance and travel time calculated based on selected travel mode. For example, for a travel mode ‘driving’ - distance will be a car road length. If you want to have pure radius distance, configure travel mode to ‘walking’.
                             </p>
                             <template #footer>
                                 <Button label="Ok" @click="closeLocationHelpDialog" icon="pi pi-check" class="p-button-outlined" />
@@ -67,7 +67,7 @@
 
                             </div>
                             <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                                <label for="minEnergyLabel">Min. Energy label</label>
+                                <label for="minEnergyLabel">Min. energy label</label>
                                 <Dropdown v-model="user.min_energy_label" placeholder="G" inputId="minEnergyLabel" optionLabel="name" :options="energyLabels" />
                             </div>
                         </div>
@@ -80,7 +80,7 @@
                         </h5>
                         <div class="grid formgrid">
                             <div class="col-12 lg:col-10 lg:mb-0">
-                                <label for="TravelAddress">Travel address</label>
+                                <label for="TravelAddress">Travel address ( city, address, postcode )</label>
                                 <InputGroup>
                                     <InputText placeholder="" type="text" v-model="user.travel_time_address" inputId="TravelAddress"/>
                                 </InputGroup>
@@ -109,7 +109,7 @@
                                 </InputGroup>
                             </div>
                             <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                                <label for="commuteMode">Commute Mode</label>
+                                <label for="commuteMode">Travel mode</label>
                                 <Dropdown optionLabel="label" optionValue="value" v-model="user.commute_mode" inputId="commuteMode" :options="commuteModes" />
                             </div>
                         </div>
@@ -181,7 +181,7 @@ export default {
                         summary: "Update",
                         detail: message,
                         group: "br",
-                        life: 2000,
+                        life: 6000,
                     });
                 }
             }
@@ -228,7 +228,7 @@ export default {
             if( event.value && this.user.selected_cities.find( (element) => element == event.value ) == undefined )
             {
                 this.user.selected_cities.push( event.value );
-                this.showToast( "info", "Added " + event.value + " to the list of selected cities." );
+                // this.showToast( "info", "Added " + event.value + " to the list of selected cities." );
             }
         },
         showToast( severity, message ){
@@ -248,15 +248,11 @@ export default {
             if( index > -1 )
             {
                 this.user.selected_cities.splice( index, 1 );
-                this.showToast( "info", "Removed " + this.selectedCityFromAddedCities + " from the list of selected cities." );
+                // this.showToast( "info", "Removed " + this.selectedCityFromAddedCities + " from the list of selected cities." );
             }
         },
         getSelectedAddressGoogleMap() {
             return "https://maps.google.com/?q=" + encodeURIComponent( this.user.travel_time_address );
-        },
-        test( event ) {
-            event.target._value = "AAA"
-            console.log( event );
         },
         openLocationHelpDialog() {
             this.locationHelpDialogDisplay = true;
@@ -269,6 +265,10 @@ export default {
         },
         closeCitiesHelpDialog() {
             this.citiesHelpDialogDisplay = false;
+        }, 
+        test() {
+            console.log("111");
+            this.showToast( "info", "Removed " + this.selectedCityFromAddedCities + " from the list of selected cities." );
         }
     },
 };

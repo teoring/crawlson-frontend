@@ -4,6 +4,7 @@
         <div class="layout-sidebar">
             <app-sidebar></app-sidebar>
         </div>
+        <app-utilities></app-utilities>
         <div class="layout-main-container">
             <div class="layout-main">
                 <router-view></router-view>
@@ -19,6 +20,7 @@
 import AppTopbar from './AppTopbar.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppFooter from './AppFooter.vue';
+import AppUtilities from './AppUtilities.vue';
 
 import { useLayout } from '@/layout/composables/layout';
 import { computed, watch, ref } from 'vue';

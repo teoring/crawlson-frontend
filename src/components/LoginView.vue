@@ -177,7 +177,6 @@ export default {
                             },
                         })
                         .then((response) => {
-                            console.log(response);
                             if (response && response.data && response.data.token != "") {
                                 this.$store.commit(`auth/${SET_JWT_TOKEN}`, response.data.token);
                                 this.$store.commit(`auth/${SET_AUTHENTICATION}`, true);
